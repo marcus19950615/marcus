@@ -59,6 +59,30 @@ _.forEach(program.override, function(valueParam){
     var k = keys[keys.length - 1];
     configElement[k] = value;
 });
+var mongodb = require('mongodb');
+var mongodbURL = 'mongodb://dbuser:asd757959@ds161255.mlab.com:61255/carcar';
+var myDB;
+
+mongodb.MongoClient.connect(mongodbURL, function(err, db) {
+if (err) {
+console.log(err);
+} else {
+	myDB = db;
+console.log('connection success');
+}
+});
+app.get('/api/test', function(request, response) {
+var collection = myDB.collection('my_data');
+collection.find({}).toArray(function(err, docs) {
+if (err) {
+response.status(406).end();
+} else {
+response.type('application/json');
+response.status(200).send(docs);
+response.end();
+}
+});
+});
 
 config.initialize(configPath, overrideValues);
 web.start();
